@@ -19,5 +19,13 @@ class PostCreateSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'title', 'owner', 'category', 'preview')
 
+class PostDetailSerializers(serializers.ModelSerializer):
+    owner_username = serializers.ReadOnlyField(source='owner.username')
+    category_name = serializers.ReadOnlyField(source='category.name')
+
+    class Meta:
+        model = Post
+        fields = '__all__'
+
 
 
