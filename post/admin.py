@@ -7,4 +7,4 @@ from post.models import Post
 
 @admin.register(Post)
 class Posts(admin.ModelAdmin):
-    list_display = ('title', 'category')
+    list_display = ('id', 'owner', 'title', 'category')
