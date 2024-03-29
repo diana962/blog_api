@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'comment',
     'like',
     'post',
+
     #installed apps
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth'
+    'dj_rest_auth',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -158,3 +160,12 @@ REST_FRAMEWORK = {
     ]
 }
 
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}

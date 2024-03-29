@@ -16,3 +16,4 @@ class LikeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('You already liked it once!')
         return attrs
 
+

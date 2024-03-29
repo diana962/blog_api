@@ -12,12 +12,20 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-
-    # why nothing appears?
+    comments_count = serializers.ReadOnlyField(source='comments')
+    likes_count = serializers.ReadOnlyField(source='likes.count')
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'owner', 'owner_username', 'category', 'category_name', 'preview', 'images')
+        fields = ('id', 'title', 'owner', 'owner_username', 'category',
+                  'category_name', 'preview', 'images', 'likes_count')
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        user = self.context.get('request').user
+        repr['is_liked'] = user.likes.filter(post=instance).exists()
+        return repr
+
 
 
 
@@ -44,11 +52,18 @@ class PostDetailSerializers(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField(source='category.name')
     comments = CommentSerializer(many=True, read_only=True)
     comments_count = serializers.ReadOnlyField(source='comments.count')
+    likes_count = serializers.ReadOnlyField(source='likes.count')
     images = PostImageSerializer(many=True, required=False)
 
     class Meta:
         model = Post
         fields = '__all__'
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        user = self.context.get('request').user
+        repr['is_liked'] = user.likes.filter(post=instance).exists()
+        return repr
 
 
 
