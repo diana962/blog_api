@@ -36,7 +36,6 @@ urlpatterns = [
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-# TODO likes
 # TODO View Set
 # Todo search Filter Pagination
 # TODO Favorite actions

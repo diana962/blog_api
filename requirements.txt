@@ -5,3 +5,4 @@ python-decouple
 djangorestframework
 dj-rest-auth
 drf-yasg
+django-filter

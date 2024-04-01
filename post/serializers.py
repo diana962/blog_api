@@ -12,20 +12,20 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-    comments_count = serializers.ReadOnlyField(source='comments')
+    comments_count = serializers.ReadOnlyField(source='comments.count')
     likes_count = serializers.ReadOnlyField(source='likes.count')
 
     class Meta:
         model = Post
         fields = ('id', 'title', 'owner', 'owner_username', 'category',
-                  'category_name', 'preview', 'images', 'likes_count')
+                  'category_name', 'preview', 'images', 'likes_count', 'comments_count')
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)
         user = self.context.get('request').user
-        repr['is_liked'] = user.likes.filter(post=instance).exists()
+        if user.is_authenticated:
+            repr['is_liked'] = user.likes.filter(post=instance).exists()
         return repr
-
 
 
 
