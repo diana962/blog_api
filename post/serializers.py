@@ -50,7 +50,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostDetailSerializers(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-    comments = CommentSerializer(many=True, read_only=True)
+    # comments = CommentSerializer(many=True, read_only=True)
     comments_count = serializers.ReadOnlyField(source='comments.count')
     likes_count = serializers.ReadOnlyField(source='likes.count')
     images = PostImageSerializer(many=True, required=False)

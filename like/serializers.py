@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from like.models import Like
+from like.models import Like, Favorite
 
 class LikeSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
@@ -15,5 +15,27 @@ class LikeSerializer(serializers.ModelSerializer):
         if user.likes.filter(post=post).exists():
             raise serializers.ValidationError('You already liked it once!')
         return attrs
+
+
+class LikeUserSerializer(serializers.ModelSerializer):
+    owner_username = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Like
+        exclude = ('post', )
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    post_title = serializers.ReadOnlyField(source='post.title')
+    # post_preview = serializers.ReadOnlyField(source='post.preview.url')
+    class Meta:
+        model = Favorite
+        fields = ('id', 'post', 'post_title')
+
+    def to_representation(self, instance):
+        repr = super(FavoriteSerializer, self).to_representation(instance)
+        preview = instance.post.preview
+        repr['post_preview'] = preview.url if preview else None
+        return repr
 
 

@@ -1,9 +1,14 @@
 from rest_framework import generics, permissions
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from comment.serializers import CommentSerializer
+from like.models import Favorite
+from like.serializers import LikeUserSerializer
 from post.models import Post
 from post import serializers
 from post.permissions import IsOwner, IsOwnerOrAdmin
@@ -41,6 +46,46 @@ class PostViewSet(ModelViewSet):
         # other users can watch and create posts
         return [permissions.IsAuthenticatedOrReadOnly(), ]
 
+    @action(['GET'], detail=True)
+    def comments(self, request, pk):
+        # post = Post.objects.get(pk=pk)
+        post = self.get_object()
+        comments = post.comments.all()
+        serializer = CommentSerializer(instance=comments, many=True)
+        return Response(serializer.data, status=200)
+
+    @action(['GET'], detail=True)
+    def likes(self, request, pk):
+        post = self.get_object()
+        likes = post.likes.all()
+        serializer = LikeUserSerializer(instance=likes, many=True)
+        return Response(serializer.data, status=200)
+
+    @action(['POST', 'DELETE'], detail=True)
+    def favorites(self, request, pk):
+        post = self.get_object()
+        user = request.user
+        favorite = user.favorites.filter(post=post)
+
+        if request.method == 'POST':
+            if favorite.exists():
+                return Response({'message': 'already in Favorites'}, status=400)
+            Favorite.objects.create(owner=user, post=post)
+            return Response({'message': 'created in Favorites'}, status=201)
+
+        if favorite.exists():
+            favorite.delete()
+            return Response({'message': 'deleted'}, status=204)
+        return Response({'message': 'Post not found in Favorites!'})
+
+
+        # if favorite.exists():
+        #     favorite.delete()
+        #     return Response({'message': 'deleted'}, status=204)
+        # else:
+        #     favorite = Favorite(owner=user, post=post)
+        #     favorite.save()
+        #     return Response({'message': 'created'}, status=201)
 
 
 # class PostListCreateView(generics.ListCreateAPIView):
