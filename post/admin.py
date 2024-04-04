@@ -9,3 +9,4 @@ from post.models import Post
 class Posts(admin.ModelAdmin):
     list_display = ('id', 'owner', 'title', 'category')
     # list_display = ('__all__') cant work
+#asdasd
